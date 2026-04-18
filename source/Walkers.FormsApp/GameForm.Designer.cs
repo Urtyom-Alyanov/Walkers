@@ -1,6 +1,6 @@
-﻿namespace Walkers.FormsApp;
+namespace Walkers.FormsApp;
 
-partial class Form1
+partial class GameForm
 {
     /// <summary>
     ///  Required designer variable.
@@ -31,7 +31,7 @@ partial class Form1
         components = new System.ComponentModel.Container();
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(800, 450);
-        Text = "Form1";
+        Text = "Игра";
     }
 
     #endregion
