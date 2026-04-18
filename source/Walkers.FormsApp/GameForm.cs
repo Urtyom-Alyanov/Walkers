@@ -42,13 +42,23 @@ public partial class GameForm : Form
         _gameLog = new ListBox { Location = new Point(600, 100), Size = new Size(200, 300) };
         Controls.Add(_gameLog);
         
-        var lblTurn = new Label { Text = $"Ход: {_game.CurrentPlayer.Name}", Location = new Point(600, 20), AutoSize = true };
+        var lblTurn = new Label { Text = $"Ход: {_game.CurrentPlayer.Name}", Location = new Point(600, 20), AutoSize = true, Font = new Font(Font, FontStyle.Bold) };
         Controls.Add(lblTurn);
-
+        
         this.Paint += GameForm_Paint;
     }
 
-    private void AddLog(string message) => _gameLog.Items.Add($"{DateTime.Now:HH:mm:ss} - {message}");
+    private void AddLog(string message, string status = "") 
+    {
+        _gameLog.Items.Add($"{DateTime.Now:HH:mm:ss} - {message}");
+        
+        var lblTurn = Controls.OfType<Label>().FirstOrDefault();
+        if (lblTurn != null)
+        {
+            lblTurn.Text = $"Ход: {_game.CurrentPlayer.Name} {status}";
+            lblTurn.ForeColor = _game.CurrentPlayer.Name == "Игрок 1" ? Color.Goldenrod : Color.Blue;
+        }
+    }
 
     private void BtnRoll_Click(object? sender, EventArgs e)
     {
@@ -57,7 +67,8 @@ public partial class GameForm : Form
         var p = _game.CurrentPlayer;
         int newPos = Math.Min(p.Position + dice, 49);
         bool extraTurn = false;
-        
+        string status = "";
+
         var tile = _game.Board.Tiles[newPos];
         if (tile.TeleportTarget.HasValue)
         {
@@ -66,17 +77,19 @@ public partial class GameForm : Form
         }
         else if (tile.Type == "Trap")
         {
+            status = "(Ловушка!)";
             AddLog($"{p.Name} в ловушке, пропуск хода!");
-            _game.NextTurn(); 
+            _game.NextTurn(); // Пропуск текущего хода при следующем клике
         }
         else if (tile.Type == "Bonus")
         {
             extraTurn = true;
+            status = "(Бонус!)";
             AddLog($"{p.Name} получил бонус!");
         }
-        
+
         p.Position = newPos;
-        
+
         if (p.Position == 49)
         {
             AddLog($"{p.Name} победил!");
@@ -86,10 +99,10 @@ public partial class GameForm : Form
         }
 
         if (!extraTurn) _game.NextTurn();
-        
+
         this.Invalidate();
-        AddLog($"{p.Name} выбросил {dice}. Позиция: {p.Position}");
-        
+        AddLog($"{p.Name} выбросил {dice}. Позиция: {p.Position}", status);
+
         var lblTurn = Controls.OfType<Label>().FirstOrDefault();
         if (lblTurn != null) lblTurn.Text = $"Ход: {_game.CurrentPlayer.Name}";
     }
@@ -131,6 +144,17 @@ public partial class GameForm : Form
             g.FillEllipse(player.Name == "Игрок 1" ? Brushes.Yellow : Brushes.Blue, 10 + col * (TileSize + 5) + 10, 50 + row * (TileSize + 5) + 10, 20, 20);
         }
 
-        g.DrawString("Легенда: Start-Зеленый, Finish-Золотой, Teleport-Фиолет, Trap-Оранж, Bonus-Голубой", this.Font, Brushes.Black, 10, 350);
+        // Легенда
+        int legY = 350;
+        int x = 10;
+        
+        string[] legend = { "Start", "Finish", "Teleport", "Trap", "Bonus" };
+        Brush[] brushes = { Brushes.Green, Brushes.Gold, Brushes.Purple, Brushes.OrangeRed, Brushes.LightBlue };
+        
+        for (int i = 0; i < legend.Length; i++)
+        {
+            g.DrawString(legend[i], this.Font, brushes[i], x, legY);
+            x += (int)g.MeasureString(legend[i], this.Font).Width + 10;
+        }
     }
 }
