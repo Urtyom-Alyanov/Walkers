@@ -1,0 +1,33 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      - name: Pack artifacts
+        run: |
+          mkdir build
+          dotnet publish -c Release -o build/app
+          copy report.docx build/
+          Compress-Archive -Path build/* -DestinationPath Walkers-Release.zip
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Walkers-Release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
