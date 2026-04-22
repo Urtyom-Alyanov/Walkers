@@ -1,0 +1,14 @@
+[workspace]
+members = [
+  "source/core"
+]
+resolver = "2"
+
+[workspace.package]
+readme = "./README.md"
+license = "MIT"
+description = "A game for course project"
+authors = [ "Urtyom-Alyanov" ]
+edition = "2024"
+version = "0.1.0"
+repository = "https://github.com/Urtyom-Alyanov/Walkers"
