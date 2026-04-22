@@ -14,13 +14,14 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
+        build-toolchain = fenix.packages.${system}.stable.withComponents [
+          "cargo"
+          "rustc"
+          "rust-src"
+          "clippy"
+        ];
         toolchain = fenix.packages.${system}.combine [
-          fenix.packages.${system}.stable.withComponents [
-            "cargo"
-            "rustc"
-            "rust-src"
-            "clippy"
-          ]
+          build-toolchain
           fenix.packages.${system}.latest.rustfmt
         ];
       in
