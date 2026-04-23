@@ -21,7 +21,7 @@ pub struct GameOverStats {}
 impl Game
 {
   /// Начать игру с двумя игроками и 20-ю клетками
-  fn start() -> Self
+  pub fn start() -> Self
   {
     let count_players: usize = 2;
     let count_cells: usize = 20;
