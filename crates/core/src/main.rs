@@ -1,4 +1,7 @@
-use rand::{RngExt, rng};
+use rand::{
+  RngExt,
+  rng,
+};
 
 /// Тип клетки
 ///
@@ -6,27 +9,35 @@ use rand::{RngExt, rng};
 /// Trap - пропускает ход
 /// Bonus - дополнительный ход
 /// Teleport - телепортация на определённую клетку
-enum CellType {
+enum CellType
+{
   Base,
   Trap,
   Bonus,
-  Teleport { destination: u32 },
+  Teleport
+  {
+    destination: u32,
+  },
 }
 
-struct Cell {
+struct Cell
+{
   id: u32,
   cell_type: CellType,
 }
 
 /// Игрок
-struct Player {
+struct Player
+{
   id: u32,
   pos: u32,
 }
 
-impl Player {
+impl Player
+{
   /// Игральный кубик у нас 6 максимум точек имеет
-  fn random_walk() -> i32 {
+  fn random_walk() -> i32
+  {
     let mut rng = rng();
 
     rng.random_range(1..=6)
@@ -34,14 +45,17 @@ impl Player {
 }
 
 /// Структура игры
-struct Game {
+struct Game
+{
   players: Vec<Player>,
   cells: Vec<Cell>,
 }
 
-impl Game {
+impl Game
+{
   /// Начать игру с двумя игроками и 20-ю клетками
-  fn start_game() -> Self {
+  fn start_game() -> Self
+  {
     let count_players: usize = 2;
     let count_cells: usize = 20;
 
@@ -50,24 +64,21 @@ impl Game {
 
     for idx in 0..count_players
     {
-      players.push(Player {
-        id: idx.try_into().expect("Количество игроков слишком большое"),
-        pos: 0,
-      });
+      players.push(Player { id: idx.try_into().expect("Количество игроков слишком большое"),
+                            pos: 0 });
     }
 
     for idx in 0..count_cells
     {
-      cells.push(Cell {
-        id: idx.try_into().expect("Количество клеток слишком большое"),
-        cell_type: CellType::Base,
-      });
+      cells.push(Cell { id: idx.try_into().expect("Количество клеток слишком большое"),
+                        cell_type: CellType::Base });
     }
 
     Self { players, cells }
   }
 }
 
-fn main() {
+fn main()
+{
   println!("Hello world!");
 }
