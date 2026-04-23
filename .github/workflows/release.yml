@@ -1,0 +1,32 @@
+﻿name: Release new version
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+
+jobs:
+  build_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build release
+        run: cargo build --release
+
+      - name: Artifacts folder create
+        run: mkdir artifacts
+
+      - name: Copy binary into artifacts
+        run: |
+          cp target/release/core artifacts/
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
