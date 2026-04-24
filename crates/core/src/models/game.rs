@@ -1,10 +1,17 @@
-use crate::models::cell::{
-  Cell,
-  CellType,
+use rand::{
+  RngExt,
+  rng,
 };
-use crate::models::player::{
-  Player,
-  PlayerState,
+
+use crate::models::{
+  cell::{
+    Cell,
+    CellType,
+  },
+  player::{
+    Player,
+    PlayerState,
+  },
 };
 
 /// Структура игры
@@ -34,10 +41,42 @@ impl Game
       players.push(Player::new(idx.try_into().expect("Количество игроков слишком большое")));
     }
 
+    let mut rng_handle = rng();
+
     for idx in 0..count_cells
     {
+      let cell_type = if idx == count_cells - 1
+      {
+        CellType::Finish
+      }
+      else if idx == 0
+      {
+        CellType::Base
+      }
+      else
+      {
+        let type_rand: u32 = rng_handle.random_range(1..=10);
+        if type_rand <= 2
+        {
+          CellType::Trap
+        }
+        else if type_rand <= 4
+        {
+          CellType::Bonus
+        }
+        else if type_rand == 5
+        {
+          let dest = rng_handle.random_range((idx + 1) as u32..count_cells as u32);
+          CellType::Teleport { destination: dest }
+        }
+        else
+        {
+          CellType::Base
+        }
+      };
+
       cells.push(Cell { id: idx.try_into().expect("Количество клеток слишком большое"),
-                        cell_type: CellType::Base });
+                        cell_type });
     }
 
     Self { players,
@@ -52,33 +91,34 @@ impl Game
   {
     let current_player = self.current_player.clone();
 
-    // Переходим к следующему не заблокированному игроку
     for player in &self.players
     {
       if (player.id > current_player) && player.state != PlayerState::Block
       {
         self.current_player = player.id.clone();
+        return self.current_player;
+      }
+    }
+
+    self.current_player = 0;
+
+    for player in &mut self.players
+    {
+      if player.state == PlayerState::Block
+      {
+        player.state = PlayerState::Normal;
+      }
+    }
+
+    for player in &self.players
+    {
+      if player.state != PlayerState::Block
+      {
+        self.current_player = player.id;
         break;
       }
     }
 
-    // Если не сменилось, начинаем новый круг
-    if current_player == self.current_player
-    {
-      self.current_player = 0;
-
-      // Возвращаем "нормальный" статус заблокированным игрокам
-      for player in &mut self.players
-      {
-        if player.state == PlayerState::Block
-        {
-          player.state = PlayerState::Normal;
-          break;
-        }
-      }
-    }
-
-    // Возвращаем новый id-шник нового текущего игрока
     self.current_player
   }
 

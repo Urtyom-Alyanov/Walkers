@@ -1,3 +1,3 @@
-mod cell;
-mod game;
-mod player;
+pub mod cell;
+pub mod game;
+pub mod player;
