@@ -29,6 +29,7 @@ jobs:
 
   build:
     name: Build test
+    needs: format-and-linting
     runs-on: ubuntu-latest
 
     steps:
@@ -54,5 +55,6 @@ jobs:
 
   publish:
     name: Publish as release
+    needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     uses: ./.github/workflows/release.yml
