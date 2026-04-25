@@ -89,13 +89,13 @@ impl Game
   /// Начало нового круга можно проверить с помощью
   pub fn next_player(&mut self) -> u32
   {
-    let current_player = self.current_player.clone();
+    let current_player = self.current_player;
 
     for player in &self.players
     {
       if (player.id > current_player) && player.state == PlayerState::Normal
       {
-        self.current_player = player.id.clone();
+        self.current_player = player.id;
         return self.current_player;
       }
     }

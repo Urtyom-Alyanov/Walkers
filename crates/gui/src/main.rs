@@ -6,23 +6,13 @@ use core::models::{
 
 use eframe::egui;
 
+#[derive(Default)]
 struct WalkersApp
 {
   game: Option<Game>,
   winner: Option<u32>,
   dice_result: Option<u32>,
   game_started: bool,
-}
-
-impl Default for WalkersApp
-{
-  fn default() -> Self
-  {
-    Self { game: None,
-           winner: None,
-           dice_result: None,
-           game_started: false }
-  }
 }
 
 impl WalkersApp
@@ -111,7 +101,7 @@ impl WalkersApp
 
     let board_width = board_cols as f32 * (cell_size + spacing);
     let board_height =
-      ((game.cells.len() + board_cols - 1) / board_cols) as f32 * (cell_size + spacing);
+      (game.cells.len() + board_cols - 1).div_ceil(board_cols) as f32 * (cell_size + spacing);
 
     let (response, painter) = ui.allocate_painter(egui::vec2(board_width + 50.,
                                                              board_height + 50.),
@@ -168,16 +158,7 @@ impl WalkersApp
 
       painter.rect_filled(rect, 2., cell_color);
 
-      let is_occupied = game.players.iter().any(|p| p.target_pos == cell.id as u32);
-
-      let button_text = if is_occupied
-      {
-        cell_label.to_string()
-      }
-      else
-      {
-        cell_label.to_string()
-      };
+      let button_text = cell_label.to_string();
 
       let text_pos = egui::Pos2::new(x + cell_size / 2. - 10., y + cell_size / 2. - 10.);
       painter.text(text_pos,
