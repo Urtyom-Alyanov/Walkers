@@ -8,6 +8,7 @@ pub enum PlayerState
 {
   Normal,
   Block,
+  SemiBlock,
 }
 
 pub struct Player
@@ -39,7 +40,7 @@ impl Player
     let mut rng = rng();
     let count_walk: u32 = rng.random_range(1..=6);
 
-    let positions_ost: u32 = count_cells_as_u32 - self.pos;
+    let positions_ost: u32 = count_cells_as_u32 - self.pos - 1;
 
     let count_walk = if positions_ost < count_walk
     {
@@ -52,7 +53,7 @@ impl Player
 
     let new_pos = self.pos + count_walk;
 
-    self.target_pos = new_pos;
+    self. target_pos= new_pos;
     self.pos = new_pos;
 
     new_pos

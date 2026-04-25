@@ -31,7 +31,7 @@ impl Game
   pub fn start() -> Self
   {
     let count_players: usize = 2;
-    let count_cells: usize = 20;
+    let count_cells: usize = 40;
 
     let mut players: Vec<Player> = vec![];
     let mut cells: Vec<Cell> = vec![];
@@ -93,7 +93,7 @@ impl Game
 
     for player in &self.players
     {
-      if (player.id > current_player) && player.state != PlayerState::Block
+      if (player.id > current_player) && player.state == PlayerState::Normal
       {
         self.current_player = player.id.clone();
         return self.current_player;
@@ -104,9 +104,14 @@ impl Game
 
     for player in &mut self.players
     {
-      if player.state == PlayerState::Block
+      if player.state == PlayerState::SemiBlock
       {
         player.state = PlayerState::Normal;
+      }
+
+      if player.state == PlayerState::Block
+      {
+        player.state = PlayerState::SemiBlock;
       }
     }
 
@@ -123,5 +128,5 @@ impl Game
   }
 
   /// Завершает игру при победе определённого игрока
-  pub fn win(&self, player: &Player) -> GameOverStats { GameOverStats {} }
+  pub fn win(&self) -> GameOverStats { GameOverStats {} }
 }

@@ -41,13 +41,16 @@ impl WalkersApp
     {
       let current_id = game.current_player;
       let count_cells = game.count_cells;
+      
+      let prev_pos = game.players[current_id as usize].pos;
 
       let new_pos = {
         let player = &mut game.players[current_id as usize];
         player.random_walk(game.count_cells)
       };
 
-      {
+      let is_switch = {
+        let mut is_switch = true;
         let player = &mut game.players[current_id as usize];
         if let Some(cell) = game.cells.get(new_pos as usize)
         {
@@ -67,15 +70,22 @@ impl WalkersApp
               self.winner = Some(current_id);
               return;
             }
-            _ =>
-            {}
+            CellType::Bonus => {
+              is_switch = false;
+            }
+            _ => {}
           }
         }
+
+        is_switch
+      };
+
+      if is_switch {
+        game.next_player();
       }
-
-      game.next_player();
-
-      self.dice_result = Some(new_pos as u32 + 1);
+      
+      let dice_res = new_pos - prev_pos;
+      self.dice_result = Some(dice_res);
 
       if new_pos as usize >= count_cells - 1
       {
@@ -92,8 +102,8 @@ impl WalkersApp
       None => return,
     };
 
-    let board_cols = 5;
-    let cell_size = 50.;
+    let board_cols = 10;
+    let cell_size = 60.;
     let spacing = 10.;
 
     let board_width = board_cols as f32 * (cell_size + spacing);
@@ -137,14 +147,16 @@ impl WalkersApp
         CellType::Finish => egui::Color32::from_rgb(255, 215, 0),
       };
 
-      let cell_label: &str = match &cell.cell_type
+      let cell_label_type: &str = match &cell.cell_type
       {
         CellType::Base => "🏠",
         CellType::Trap => "🪤",
         CellType::Bonus => "🎁",
-        CellType::Teleport { .. } => "🔀",
+        CellType::Teleport { destination } => &format!("🔀 -> {}", destination),
         CellType::Finish => "🏁",
       };
+
+      let cell_label = format!("{} {}", display_idx, cell_label_type);
 
       let x = base_pos.x + col as f32 * (cell_size + spacing);
       let y = base_pos.y + row as f32 * (cell_size + spacing);
@@ -173,7 +185,7 @@ impl WalkersApp
 
       let arrow_color = egui::Color32::from_rgb(50, 150, 50);
 
-      if is_reversed
+if is_reversed
       {
         if col > 0
         {
@@ -190,12 +202,12 @@ impl WalkersApp
           let arrow_rect = egui::Rect::from_min_size(egui::Pos2::new(x + cell_size + spacing / 2.
                                                                      - 5.,
                                                                      y + cell_size / 2. - 3.),
-                                                     egui::vec2(spacing, 6.));
+                                                    egui::vec2(spacing, 6.));
           painter.rect_filled(arrow_rect, 0., arrow_color);
         }
       }
 
-      if grid_idx + board_cols < game.cells.len()
+      if grid_idx + board_cols < game.cells.len() && ((is_reversed && col == 0) || (!is_reversed && col == board_cols - 1))
       {
         let arrow_rect = egui::Rect::from_min_size(egui::Pos2::new(x + cell_size / 2. - 3.,
                                                                    y + cell_size + spacing / 2.
@@ -205,7 +217,7 @@ impl WalkersApp
       }
     }
 
-    for player in &game.players
+for (i, player) in game.players.iter().enumerate()
     {
       let target_grid_idx = player.target_pos as usize;
       let target_row = target_grid_idx / board_cols;
@@ -224,8 +236,11 @@ impl WalkersApp
       let target_x = base_pos.x + target_display_col as f32 * (cell_size + spacing);
       let target_y = base_pos.y + target_row as f32 * (cell_size + spacing);
 
-      let player_rect = egui::Rect::from_min_size(egui::Pos2::new(target_x + cell_size / 4.,
-                                                                  target_y + cell_size / 4.),
+      let offset_x = if i == 1 { cell_size / 4. } else { 0. };
+      let offset_y = if i == 1 { cell_size / 4. } else { 0. };
+
+      let player_rect = egui::Rect::from_min_size(egui::Pos2::new(target_x + cell_size / 4. + offset_x,
+                                                          target_y + cell_size / 4. + offset_y),
                                                   egui::vec2(cell_size / 2., cell_size / 2.));
 
       let player_color = if player.id == 0
@@ -238,7 +253,8 @@ impl WalkersApp
       };
 
       painter.rect_filled(player_rect, 4., player_color);
-      painter.text(egui::Pos2::new(target_x + cell_size / 2., target_y + cell_size / 2.),
+      painter.text(egui::Pos2::new(target_x + cell_size / 2. + offset_x,
+                                   target_y + cell_size / 2. + offset_y),
                    egui::Align2::CENTER_CENTER,
                    format!("P{}", player.id),
                    egui::FontId::new(12., egui::FontFamily::Proportional),
@@ -276,6 +292,7 @@ impl WalkersApp
                                   {
                                     PlayerState::Normal => "Активен",
                                     PlayerState::Block => "Заблокирован",
+                                    PlayerState::SemiBlock => "Заблокирован (СКОРО)"
                                   };
 
                                   ui.label(egui::RichText::new(player_name).color(player_color));
