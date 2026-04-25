@@ -7,20 +7,38 @@ permissions:
 
 jobs:
   build_release:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        include:
+          - os: ubuntu-latest
+            artifact_name: walkers-gui-linux-amd64
+          - os: windows-latest
+            artifact_name: walkers-gui-windows-amd64.exe
+
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
       - name: Build release
         run: cargo build --release
 
-      - name: Artifacts folder create
-        run: mkdir artifacts
-
-      - name: Copy binary into artifacts
+      - name: Prepare artifacts
+        shell: bash
         run: |
-          cp target/release/$(ls target/release | grep -v '\.' | head -n 1) artifacts/
+          mkdir artifacts
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            cp target/release/*.exe artifacts/${{ matrix.artifact_name }}
+          else 
+            find target/release -maxdepth 1 -type f ! -name "*.*" -exec cp {} artifacts/${{ matrix.artifact_name }} \;
+          fi
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
