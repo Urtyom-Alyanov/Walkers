@@ -1,0 +1,9 @@
+[package]
+name = "gui"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+core = { path = "../core" }
+eframe = "0.32"
+rand = "0.10"

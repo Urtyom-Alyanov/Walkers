@@ -1,9 +1,0 @@
-<Solution>
-  <Folder Name="/source/">
-    <Project Path="source/Walkers.Core/Walkers.Core.csproj" />
-    <Project Path="source/Walkers.FormsApp/Walkers.FormsApp.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/Walkers.Core.Tests/Walkers.Core.Tests.csproj" />
-  </Folder>
-</Solution>
