@@ -1,11 +1,6 @@
 name: CICD
 
-on:
-  push:
-    branches: [ 'master' ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ 'master' ]
+on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
@@ -58,3 +53,4 @@ jobs:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     uses: ./.github/workflows/release.yml
+    secrets: inherit
