@@ -3,7 +3,7 @@
 ![GitHub branch status](https://img.shields.io/github/check-runs/Urtyom-Alyanov/Walkers/master?style=for-the-badge&logo=githubactions&logoColor=FFFFFF)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Urtyom-Alyanov/Walkers?style=for-the-badge&logo=github&logoColor=FFFFFF)
 
-![GitHub top language](https://img.shields.io/github/languages/top/Urtyom-Alyanov/Walkers?style=for-the-badge&logo=rust&color=8B00FF&logoColor=FFFFFF)
+![GitHub top language](https://img.shields.io/github/languages/top/Urtyom-Alyanov/Walkers?style=for-the-badge&logo=rust&color=FF8000&logoColor=FFFFFF)
 ![Last Commit](https://img.shields.io/github/last-commit/Urtyom-Alyanov/Walkers?style=for-the-badge&logo=git&logoColor=FFFFFF)  
 
 ---
