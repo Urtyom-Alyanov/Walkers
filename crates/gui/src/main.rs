@@ -41,7 +41,7 @@ impl WalkersApp
     {
       let current_id = game.current_player;
       let count_cells = game.count_cells;
-      
+
       let prev_pos = game.players[current_id as usize].pos;
 
       let new_pos = {
@@ -70,20 +70,23 @@ impl WalkersApp
               self.winner = Some(current_id);
               return;
             }
-            CellType::Bonus => {
+            CellType::Bonus =>
+            {
               is_switch = false;
             }
-            _ => {}
+            _ =>
+            {}
           }
         }
 
         is_switch
       };
 
-      if is_switch {
+      if is_switch
+      {
         game.next_player();
       }
-      
+
       let dice_res = new_pos - prev_pos;
       self.dice_result = Some(dice_res);
 
@@ -185,7 +188,7 @@ impl WalkersApp
 
       let arrow_color = egui::Color32::from_rgb(50, 150, 50);
 
-if is_reversed
+      if is_reversed
       {
         if col > 0
         {
@@ -202,12 +205,13 @@ if is_reversed
           let arrow_rect = egui::Rect::from_min_size(egui::Pos2::new(x + cell_size + spacing / 2.
                                                                      - 5.,
                                                                      y + cell_size / 2. - 3.),
-                                                    egui::vec2(spacing, 6.));
+                                                     egui::vec2(spacing, 6.));
           painter.rect_filled(arrow_rect, 0., arrow_color);
         }
       }
 
-      if grid_idx + board_cols < game.cells.len() && ((is_reversed && col == 0) || (!is_reversed && col == board_cols - 1))
+      if grid_idx + board_cols < game.cells.len()
+         && ((is_reversed && col == 0) || (!is_reversed && col == board_cols - 1))
       {
         let arrow_rect = egui::Rect::from_min_size(egui::Pos2::new(x + cell_size / 2. - 3.,
                                                                    y + cell_size + spacing / 2.
@@ -217,7 +221,7 @@ if is_reversed
       }
     }
 
-for (i, player) in game.players.iter().enumerate()
+    for (i, player) in game.players.iter().enumerate()
     {
       let target_grid_idx = player.target_pos as usize;
       let target_row = target_grid_idx / board_cols;
@@ -239,9 +243,10 @@ for (i, player) in game.players.iter().enumerate()
       let offset_x = if i == 1 { cell_size / 4. } else { 0. };
       let offset_y = if i == 1 { cell_size / 4. } else { 0. };
 
-      let player_rect = egui::Rect::from_min_size(egui::Pos2::new(target_x + cell_size / 4. + offset_x,
-                                                          target_y + cell_size / 4. + offset_y),
-                                                  egui::vec2(cell_size / 2., cell_size / 2.));
+      let player_rect =
+        egui::Rect::from_min_size(egui::Pos2::new(target_x + cell_size / 4. + offset_x,
+                                                  target_y + cell_size / 4. + offset_y),
+                                  egui::vec2(cell_size / 2., cell_size / 2.));
 
       let player_color = if player.id == 0
       {
@@ -292,7 +297,7 @@ for (i, player) in game.players.iter().enumerate()
                                   {
                                     PlayerState::Normal => "Активен",
                                     PlayerState::Block => "Заблокирован",
-                                    PlayerState::SemiBlock => "Заблокирован (СКОРО)"
+                                    PlayerState::SemiBlock => "Заблокирован (СКОРО)",
                                   };
 
                                   ui.label(egui::RichText::new(player_name).color(player_color));

@@ -53,7 +53,7 @@ impl Player
 
     let new_pos = self.pos + count_walk;
 
-    self. target_pos= new_pos;
+    self.target_pos = new_pos;
     self.pos = new_pos;
 
     new_pos
