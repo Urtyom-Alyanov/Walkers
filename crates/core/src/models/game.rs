@@ -91,17 +91,6 @@ impl Game
   {
     let current_player = self.current_player;
 
-    for player in &self.players
-    {
-      if (player.id > current_player) && player.state == PlayerState::Normal
-      {
-        self.current_player = player.id;
-        return self.current_player;
-      }
-    }
-
-    self.current_player = 0;
-
     for player in &mut self.players
     {
       if player.state == PlayerState::SemiBlock
@@ -117,12 +106,14 @@ impl Game
 
     for player in &self.players
     {
-      if player.state != PlayerState::Block
+      if (player.id > current_player) && player.state == PlayerState::Normal
       {
         self.current_player = player.id;
-        break;
+        return self.current_player;
       }
     }
+
+    self.current_player = 0;
 
     self.current_player
   }

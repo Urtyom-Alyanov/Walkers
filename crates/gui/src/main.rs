@@ -143,7 +143,7 @@ impl WalkersApp
       let cell_label_type: &str = match &cell.cell_type
       {
         CellType::Base => "🏠",
-        CellType::Trap => "🪤",
+        CellType::Trap => "🧱",
         CellType::Bonus => "🎁",
         CellType::Teleport { destination } => &format!("🔀 -> {}", destination),
         CellType::Finish => "🏁",
